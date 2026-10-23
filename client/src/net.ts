@@ -33,14 +33,34 @@ export function inviteLink(code: string): string {
   return url.toString();
 }
 
-export function call<T = unknown>(event: string, payload: Record<string, unknown> = {}): Promise<Ack<T>> {
+/** Se résout quand la connexion est rétablie et la place à table reprise (ou false après le délai). */
+let ready: Promise<void> = Promise.resolve();
+function waitUntilReady(ms: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve(false), ms);
+    const done = () => {
+      clearTimeout(timer);
+      void ready.then(() => resolve(true));
+    };
+    if (socket.connected) done();
+    else socket.once('connect', () => setTimeout(done, 0));
+  });
+}
+
+export function call<T = unknown>(event: string, payload: Record<string, unknown> = {}, retry = true): Promise<Ack<T>> {
   return new Promise((resolve) => {
     if (!socket.connected) {
       resolve({ ok: false, error: 'Connexion au serveur en cours… réessaie dans un instant.' });
       return;
     }
-    socket.timeout(10000).emit(event, payload, (err: unknown, res: Ack<T>) => {
-      resolve(err ? { ok: false, error: 'Le serveur ne répond pas, réessaie.' } : res);
+    socket.timeout(8000).emit(event, payload, async (err: unknown, res: Ack<T>) => {
+      if (!err) return resolve(res);
+      // Pas de réponse : connexion à moitié coupée (veille du téléphone, réseau mobile…). On la relance et on réessaie une fois.
+      socket.disconnect().connect();
+      if (!retry) return resolve({ ok: false, error: 'Le serveur ne répond pas, réessaie.' });
+      const back = await waitUntilReady(20000);
+      if (!back) return resolve({ ok: false, error: 'Connexion perdue, réessaie dans un instant.' });
+      resolve(await call<T>(event, payload, false));
     });
   });
 }
@@ -104,19 +124,29 @@ export function sendEmote(emoji: string): void {
 
 // ---------- Événements du serveur ----------
 
-socket.on('connect', async () => {
+socket.on('connect', () => {
   store().setConnected(true);
   store().setServerStatus('online');
+  ready = rejoin();
+});
+
+/** Après chaque (re)connexion, on reprend automatiquement sa place à la table. */
+async function rejoin(): Promise<void> {
   const { session, inviteCode } = store();
   if (!session) return;
   if (inviteCode && inviteCode !== session.code) return;
-  const res = await call<JoinData>('room:join', {
-    code: session.code,
-    playerId: session.playerId,
-    token: session.token,
-    name: store().profile.name,
-    avatar: store().profile.avatar,
-  });
+  const res = await call<JoinData>(
+    'room:join',
+    {
+      code: session.code,
+      playerId: session.playerId,
+      token: session.token,
+      name: store().profile.name,
+      avatar: store().profile.avatar,
+    },
+    false,
+  );
+  if (!res.ok && res.error === 'Le serveur ne répond pas, réessaie.') return;
   if (res.ok && res.data) {
     enterRoom(res.data);
   } else {
@@ -129,7 +159,7 @@ socket.on('connect', async () => {
     }
     if (explicit) store().toast('Cette table n’existe plus (le serveur a peut-être redémarré). Crée une nouvelle table !', 'error');
   }
-});
+}
 
 socket.on('disconnect', () => store().setConnected(false));
 socket.on('state', (state: RoomState) => store().receiveState(state));
