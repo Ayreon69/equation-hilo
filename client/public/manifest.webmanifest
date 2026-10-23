@@ -1,0 +1,11 @@
+{
+  "name": "Équation Hi-Lo",
+  "short_name": "Hi-Lo",
+  "description": "Le jeu multijoueur de calcul et de bluff : vise 20 ou 1.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0a12",
+  "theme_color": "#0c0a12",
+  "lang": "fr",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
