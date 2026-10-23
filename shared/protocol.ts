@@ -4,7 +4,7 @@ import type { Arrangement } from './equation';
 
 export type Phase = 'lobby' | 'deal' | 'discard' | 'bet1' | 'build' | 'bet2' | 'declare' | 'showdown' | 'gameover';
 export type Decl = 'high' | 'low' | 'swing';
-export type ActionType = 'check' | 'call' | 'raise' | 'fold' | 'allin';
+export type ActionType = 'check' | 'call' | 'bet' | 'raise' | 'fold' | 'allin';
 export type EndMode = 'survivor' | 'rounds';
 
 export interface Settings {

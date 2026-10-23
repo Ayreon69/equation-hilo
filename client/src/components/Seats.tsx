@@ -22,6 +22,8 @@ function actionText(a: PublicHand['lastAction']): string {
       return 'Parole';
     case 'call':
       return `Suit (${a.amount})`;
+    case 'bet':
+      return `Mise ${a.amount}`;
     case 'raise':
       return `Relance à ${a.amount}`;
     case 'allin':
@@ -46,7 +48,7 @@ export function seatStatus(p: PublicPlayer, state: RoomState): { text: string; t
     case 'bet1':
     case 'bet2':
       if (r?.toAct === p.id) return { text: 'Réfléchit…', tone: 'active' };
-      if (h.lastAction) return { text: actionText(h.lastAction), tone: h.lastAction.type === 'raise' || h.lastAction.type === 'allin' ? 'hot' : 'neutral' };
+      if (h.lastAction) return { text: actionText(h.lastAction), tone: ['bet', 'raise', 'allin'].includes(h.lastAction.type) ? 'hot' : 'neutral' };
       return { text: 'Attend son tour', tone: 'muted' };
     case 'build':
       return h.ready ? { text: 'Équation prête ✓', tone: 'ok' } : { text: 'Calcule…', tone: 'wait' };

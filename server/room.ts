@@ -459,7 +459,9 @@ export class Room {
     this.clearTimers('bot:');
     const alive = this.alive();
     const roundLimit = this.settings.endMode === 'rounds' && this.roundNumber >= this.settings.maxRounds;
-    if (alive.length < 2 || roundLimit) return this.endGame();
+    // Plus aucun humain en lice : inutile de faire attendre la table pendant que les bots finissent entre eux.
+    const humansOut = this.players.some((p) => !p.isBot && p.inGame) && !alive.some((p) => !p.isBot);
+    if (alive.length < 2 || roundLimit || humansOut) return this.endGame();
     this.roundNumber++;
 
     // Le premier à parler tourne à chaque manche.
@@ -728,7 +730,7 @@ export class Room {
         this.pay(p, amount - h.roundBet);
         r.currentBet = amount;
         const allin = h.committed >= this.cap();
-        h.lastAction = { type: allin ? 'allin' : 'raise', amount };
+        h.lastAction = { type: allin ? 'allin' : opening ? 'bet' : 'raise', amount };
         this.addLog(`${p.name} ${opening ? 'mise' : 'relance à'} ${amount}${allin ? ' (plafond !)' : ''}.`, 'bet');
         break;
       }
