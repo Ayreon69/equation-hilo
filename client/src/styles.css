@@ -1940,6 +1940,29 @@ strong {
   background: #1d1828;
   border: 1px solid var(--line-2);
   box-shadow: var(--shadow);
+  animation: emote-pop 2.6s ease forwards;
+}
+
+@keyframes emote-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.6);
+  }
+  12% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.08);
+  }
+  20% {
+    transform: translateY(-6px) scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-26px) scale(0.85);
+  }
 }
 
 /* Ta main */
@@ -3465,5 +3488,9 @@ strong {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .emote-bubble {
+    animation: none !important;
   }
 }

@@ -1,5 +1,5 @@
 // Barre d'actions selon la phase : défausse du ×, enchères, équation, déclaration.
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Check, ChevronDown, ChevronUp, Minus, Pencil, Plus, Smile } from 'lucide-react';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { OP_SYMBOL, Op } from '../../../shared/cards';
@@ -74,9 +74,8 @@ export function BetControls({ state, me }: { state: RoomState; me: PublicPlayer 
           </button>
         )}
       </div>
-      <AnimatePresence>
-        {open && canRaise && (
-          <motion.div className="raise-panel" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
+      {open && canRaise && (
+          <motion.div className="raise-panel" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
             <div className="raise-top">
               <button type="button" className="icon-btn" onClick={() => setRaiseBy((v) => Math.max(1, v - 1))} aria-label="Moins">
                 <Minus size={18} />
@@ -110,7 +109,6 @@ export function BetControls({ state, me }: { state: RoomState; me: PublicPlayer 
             </button>
           </motion.div>
         )}
-      </AnimatePresence>
     </div>
   );
 }
@@ -297,24 +295,22 @@ export function EmoteButton() {
       <button type="button" className={cx('icon-btn', open && 'active')} onClick={() => setOpen((o) => !o)} aria-label="Envoyer une réaction">
         <Smile size={20} />
       </button>
-      <AnimatePresence>
-        {open && (
-          <motion.div className="emote-menu" initial={{ opacity: 0, y: 8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.95 }}>
-            {EMOTES.map((e) => (
-              <button
-                key={e}
-                type="button"
-                onClick={() => {
-                  sendEmote(e);
-                  setOpen(false);
-                }}
-              >
-                {e}
-              </button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {open && (
+        <motion.div className="emote-menu" initial={{ opacity: 0, y: 8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}>
+          {EMOTES.map((e) => (
+            <button
+              key={e}
+              type="button"
+              onClick={() => {
+                sendEmote(e);
+                setOpen(false);
+              }}
+            >
+              {e}
+            </button>
+          ))}
+        </motion.div>
+      )}
     </div>
   );
 }

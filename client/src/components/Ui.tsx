@@ -1,5 +1,5 @@
 // Petits éléments d'interface partagés : logo, notifications, compte à rebours, feuilles et menus.
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { ReactNode, useEffect, useRef } from 'react';
 import { useStore } from '../store';
@@ -27,21 +27,18 @@ export function Toasts() {
   const dismiss = useStore((s) => s.dismissToast);
   return (
     <div className="toasts" role="status" aria-live="polite">
-      <AnimatePresence>
-        {toasts.map((t) => (
-          <motion.button
-            key={t.id}
-            type="button"
-            className={cx('toast', `toast-${t.kind}`)}
-            onClick={() => dismiss(t.id)}
-            initial={{ opacity: 0, y: -14, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.96 }}
-          >
-            {t.text}
-          </motion.button>
-        ))}
-      </AnimatePresence>
+      {toasts.map((t) => (
+        <motion.button
+          key={t.id}
+          type="button"
+          className={cx('toast', `toast-${t.kind}`)}
+          onClick={() => dismiss(t.id)}
+          initial={{ opacity: 0, y: -14, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+        >
+          {t.text}
+        </motion.button>
+      ))}
     </div>
   );
 }
@@ -96,33 +93,30 @@ export function Sheet({
   useEffect(() => {
     if (open) ref.current?.focus();
   }, [open]);
+  // Pas d'animation de sortie : une feuille fermée disparaît aussitôt et ne peut jamais bloquer les clics.
+  if (!open) return null;
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div className="sheet-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
-          <motion.div
-            ref={ref}
-            tabIndex={-1}
-            role="dialog"
-            aria-modal="true"
-            aria-label={label}
-            className={cx('sheet', className)}
-            initial={{ y: 40, opacity: 0, scale: 0.98 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: 30, opacity: 0, scale: 0.98 }}
-            transition={{ type: 'spring', stiffness: 320, damping: 30 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {onClose && (
-              <button type="button" className="sheet-close icon-btn" onClick={onClose} aria-label="Fermer">
-                <X size={18} />
-              </button>
-            )}
-            {children}
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <motion.div className="sheet-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} onClick={onClose}>
+      <motion.div
+        ref={ref}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-label={label}
+        className={cx('sheet', className)}
+        initial={{ y: 40, opacity: 0, scale: 0.98 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {onClose && (
+          <button type="button" className="sheet-close icon-btn" onClick={onClose} aria-label="Fermer">
+            <X size={18} />
+          </button>
+        )}
+        {children}
+      </motion.div>
+    </motion.div>
   );
 }
 

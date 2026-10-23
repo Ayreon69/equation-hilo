@@ -1,6 +1,6 @@
 // Table de jeu : en-tête (manche, pot, minuteur), étapes de la manche, adversaires, ta main et actions.
 import confetti from 'canvas-confetti';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { BookOpen, Flag, LogOut, Menu, ScrollText, Volume2, VolumeX, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { Phase, PublicPlayer, RoomState } from '../../../shared/protocol';
@@ -136,7 +136,7 @@ function TableMenu({ state, onClose }: { state: RoomState; onClose: () => void }
   const isHost = state.hostId === state.youId;
   const playing = state.phase !== 'gameover' && state.phase !== 'lobby';
   return (
-    <motion.div className="menu-pop" initial={{ opacity: 0, y: -6, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.97 }}>
+    <motion.div className="menu-pop" initial={{ opacity: 0, y: -6, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }}>
       <button
         type="button"
         onClick={() => {
@@ -209,7 +209,7 @@ export function Table({ state }: { state: RoomState }) {
             <button type="button" className={cx('icon-btn', menuOpen && 'active')} onClick={() => setMenuOpen((o) => !o)} aria-label="Menu">
               {menuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-            <AnimatePresence>{menuOpen && <TableMenu state={state} onClose={() => setMenuOpen(false)} />}</AnimatePresence>
+            {menuOpen && <TableMenu state={state} onClose={() => setMenuOpen(false)} />}
           </div>
         </div>
       </header>
@@ -223,19 +223,16 @@ export function Table({ state }: { state: RoomState }) {
         ))}
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={`${state.phase}-${r?.number}-${info.title}`}
-          className={cx('phase-banner', `tone-${info.tone}`)}
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 6 }}
-          transition={{ duration: 0.25 }}
-        >
-          <b>{info.title}</b>
-          <span>{info.hint}</span>
-        </motion.div>
-      </AnimatePresence>
+      <motion.div
+        key={`${state.phase}-${r?.number}-${info.title}`}
+        className={cx('phase-banner', `tone-${info.tone}`)}
+        initial={{ opacity: 0, y: -6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25 }}
+      >
+        <b>{info.title}</b>
+        <span>{info.hint}</span>
+      </motion.div>
 
       <div className="table-layout">
         <main className="table-main">

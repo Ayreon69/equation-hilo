@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { WifiOff } from 'lucide-react';
 import { useEffect } from 'react';
 import { RulesSheet } from './components/Rules';
@@ -25,20 +25,12 @@ export default function App() {
   return (
     <div className="app">
       <div className="bg-deco" aria-hidden />
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={screen}
-          className="screen"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
-        >
-          {screen === 'home' && <Home />}
-          {screen === 'lobby' && state && <Lobby state={state} />}
-          {screen === 'table' && state && <Table state={state} />}
-        </motion.div>
-      </AnimatePresence>
+      {/* Pas d'animation de sortie : un écran ne doit jamais rester bloqué (onglet en arrière-plan, etc.). */}
+      <motion.div key={screen} className="screen" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }}>
+        {screen === 'home' && <Home />}
+        {screen === 'lobby' && state && <Lobby state={state} />}
+        {screen === 'table' && state && <Table state={state} />}
+      </motion.div>
       {state && !connected && session && (
         <div className="conn-banner" role="alert">
           <WifiOff size={16} /> Connexion perdue… reconnexion en cours

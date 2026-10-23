@@ -1,5 +1,5 @@
 // Places à la table : adversaires (compacts) et ta propre main.
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Crown, EyeOff, WifiOff } from 'lucide-react';
 import { NumberCard } from '../../../shared/cards';
 import { EPS, Side, TARGET, evaluateArrangement, formatEquation, formatNumber, isRounded } from '../../../shared/equation';
@@ -64,19 +64,11 @@ function EmoteBubbles({ playerId }: { playerId: string }) {
   const mine = emotes.filter((e) => e.playerId === playerId);
   return (
     <div className="emote-layer" aria-hidden>
-      <AnimatePresence>
-        {mine.map((e) => (
-          <motion.span
-            key={e.id}
-            className="emote-bubble"
-            initial={{ opacity: 0, y: 8, scale: 0.6 }}
-            animate={{ opacity: 1, y: -6, scale: 1 }}
-            exit={{ opacity: 0, y: -24, scale: 0.8 }}
-          >
-            {e.emoji}
-          </motion.span>
-        ))}
-      </AnimatePresence>
+      {mine.map((e) => (
+        <span key={e.id} className="emote-bubble">
+          {e.emoji}
+        </span>
+      ))}
     </div>
   );
 }
