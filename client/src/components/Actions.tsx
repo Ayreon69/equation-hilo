@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Check, ChevronDown, ChevronUp, Minus, Pencil, Plus, Smile } from 'lucide-react';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { OP_SYMBOL, Op } from '../../../shared/cards';
-import { EPS, Side, TARGET, evaluateArrangement, formatNumber } from '../../../shared/equation';
 import { Decl, EMOTES, PublicPlayer, RoomState } from '../../../shared/protocol';
 import { act, call, sendEmote } from '../net';
 import { cx, playerName, plural } from '../lib/util';
@@ -187,7 +186,6 @@ export function BuildPanel({ state, me }: { state: RoomState; me: PublicPlayer }
 
   const inHand = state.players.filter((p) => p.hand && !p.hand.folded);
   const readyCount = inHand.filter((p) => p.hand!.ready).length;
-  const invalid = value ? (['high', 'low'] as Side[]).filter((s) => evaluateArrangement(rowToArrangement(value[s]), nums) === null) : [];
 
   return (
     <section className="build-panel">
@@ -200,7 +198,6 @@ export function BuildPanel({ state, me }: { state: RoomState; me: PublicPlayer }
       </header>
       {value && <EquationBuilder hand={hand} value={value} onChange={onChange} locked={h.ready} />}
       <div className="dock build-dock">
-        {invalid.length > 0 && !h.ready && <p className="hint warn">Division par zéro : cette équation ne pourra pas gagner.</p>}
         <button type="button" className={cx('btn btn-xl', h.ready ? 'btn-ghost' : 'btn-primary')} onClick={toggleReady}>
           {h.ready ? (
             <>
@@ -225,12 +222,6 @@ export function BuildPanel({ state, me }: { state: RoomState; me: PublicPlayer }
 export function DeclarePanel({ state, me }: { state: RoomState; me: PublicPlayer }) {
   const h = me.hand!;
   const [confirmSwing, setConfirmSwing] = useState(false);
-  const nums = handNums(h);
-  const val = (side: Side) => (h.arrangements ? evaluateArrangement(h.arrangements[side], nums) : null);
-  const dist = (side: Side) => {
-    const v = val(side);
-    return v === null ? null : Math.abs(v - TARGET[side]);
-  };
   const declared = state.players.filter((p) => p.hand && !p.hand.folded);
   const done = declared.filter((p) => p.hand!.hasDeclared).length;
 
@@ -248,12 +239,6 @@ export function DeclarePanel({ state, me }: { state: RoomState; me: PublicPlayer
   }
 
   const choose = (decl: Decl) => act('game:declare', { decl });
-  const line = (side: Side) => {
-    const v = val(side);
-    const d = dist(side);
-    if (v === null) return 'équation invalide';
-    return `${formatNumber(v)} · ${d !== null && d < EPS ? 'parfait !' : `écart ${formatNumber(d ?? 0)}`}`;
-  };
 
   return (
     <div className="declare-panel">
@@ -262,12 +247,12 @@ export function DeclarePanel({ state, me }: { state: RoomState; me: PublicPlayer
         <button type="button" className="decl-btn decl-high" onClick={() => choose('high')}>
           <span className="decl-name">High</span>
           <span className="decl-target">vise 20</span>
-          <span className="decl-val">{line('high')}</span>
+          <span className="decl-val">ton équation « 20 »</span>
         </button>
         <button type="button" className="decl-btn decl-low" onClick={() => choose('low')}>
           <span className="decl-name">Low</span>
           <span className="decl-target">vise 1</span>
-          <span className="decl-val">{line('low')}</span>
+          <span className="decl-val">ton équation « 1 »</span>
         </button>
         <button
           type="button"

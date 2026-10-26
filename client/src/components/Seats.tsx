@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import { Crown, EyeOff, WifiOff } from 'lucide-react';
 import { NumberCard } from '../../../shared/cards';
-import { EPS, Side, TARGET, evaluateArrangement, formatEquation, formatNumber, isRounded } from '../../../shared/equation';
+import { Side, formatEquation } from '../../../shared/equation';
 import type { PublicHand, PublicPlayer, RoomState } from '../../../shared/protocol';
 import { useStore } from '../store';
 import { cx } from '../lib/util';
@@ -140,17 +140,11 @@ export function EquationLine({ side, h }: { side: Side; h: PublicHand }) {
   if (!h.arrangements) return null;
   const nums = handNums(h);
   const arr = h.arrangements[side];
-  const v = evaluateArrangement(arr, nums);
-  const dist = v === null ? null : Math.abs(v - TARGET[side]);
   return (
     <div className={cx('eq-line', `eq-line-${side}`)}>
       <span className={side === 'high' ? 'tag-high' : 'tag-low'}>{side === 'high' ? 'High' : 'Low'}</span>
       <span className="eq-line-text">
         <EqText text={formatEquation(arr, nums)} />
-      </span>
-      <span className="eq-line-val">
-        {v === null ? '÷0 !' : `${isRounded(v) ? '≈' : '='} ${formatNumber(v)}`}
-        {dist !== null && <em>{dist < EPS ? ' parfait' : ` · écart ${formatNumber(dist)}`}</em>}
       </span>
     </div>
   );

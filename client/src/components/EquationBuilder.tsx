@@ -56,9 +56,11 @@ interface Props {
   onChange: (v: BuilderValue) => void;
   locked?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  /** Affiche la valeur et l'écart en direct (entraînement uniquement : en partie, on calcule soi-même). */
+  showResult?: boolean;
 }
 
-export function EquationBuilder({ hand, value, onChange, locked, size = 'lg' }: Props) {
+export function EquationBuilder({ hand, value, onChange, locked, size = 'lg', showResult = false }: Props) {
   const [sel, setSel] = useState<Selection>(null);
   const byId = useMemo(() => new Map(hand.nums.map((c) => [c.id, c])), [hand.nums]);
 
@@ -109,6 +111,7 @@ export function EquationBuilder({ hand, value, onChange, locked, size = 'lg' }: 
                 Viser <b>{TARGET[side]}</b>
               </span>
               <span className="eq-kind">{side === 'high' ? 'High' : 'Low'}</span>
+              {showResult && (
               <span className="eq-result" aria-live="polite">
                 {v === null ? (
                   <span className="eq-error">Division par zéro !</span>
@@ -123,6 +126,7 @@ export function EquationBuilder({ hand, value, onChange, locked, size = 'lg' }: 
                   </>
                 )}
               </span>
+              )}
             </header>
             <LayoutGroup id={`row-${side}`}>
               <div className="eq-cards">

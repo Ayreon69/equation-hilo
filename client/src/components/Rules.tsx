@@ -49,7 +49,7 @@ function Sandbox() {
 
   return (
     <div className="sandbox">
-      <EquationBuilder hand={hand} value={value} onChange={setValue} size="md" />
+      <EquationBuilder hand={hand} value={value} onChange={setValue} size="md" showResult />
       <div className="sandbox-actions">
         <button type="button" className="btn btn-ghost" onClick={fresh}>
           <RefreshCw size={16} /> Nouvelle main
@@ -220,6 +220,10 @@ export function RulesSheet() {
               Un <b>√</b> s’applique à un seul chiffre. Diviser par 0 est interdit.
             </li>
             <li>Les résultats à virgule ou négatifs sont permis : c’est l’écart à la cible qui compte.</li>
+            <li>
+              <b>Pas de calculatrice !</b> Pendant la manche, le jeu n’affiche pas le résultat de tes équations : tu calcules de tête.
+              Les résultats ne sont dévoilés qu’à la révélation. (Le bac à sable plus bas, lui, calcule pour que tu t’entraînes.)
+            </li>
           </ul>
           <div className="examples">
             <p>
