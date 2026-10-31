@@ -3500,7 +3500,8 @@ strong {
   text-decoration: none;
 }
 
-@media (max-width: 359px) {
+/* Sur téléphone, les deux liens se réduisent à leur icône : la barre du haut déborderait sinon. */
+@media (max-width: 480px) {
   .all-games {
     gap: 0;
     font-size: 0;

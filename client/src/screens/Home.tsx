@@ -1,6 +1,6 @@
 // Accueil : pseudo + avatar, créer une table, rejoindre avec un code, s'entraîner contre des bots.
 import { motion } from 'framer-motion';
-import { BookOpen, Bot, House, LogIn, Plus } from 'lucide-react';
+import { BookOpen, Bot, House, LogIn, MessageSquare, Plus } from 'lucide-react';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { NumberCard, Op } from '../../../shared/cards';
 import { AVATARS } from '../../../shared/protocol';
@@ -117,6 +117,9 @@ export function Home() {
           <ServerPill />
           <a className="btn btn-ghost btn-sm all-games" href="https://akhis-games.onrender.com">
             <House size={16} aria-hidden /> Tous les jeux
+          </a>
+          <a className="btn btn-ghost btn-sm all-games" href="https://akhis-games.onrender.com/feedback.html?jeu=equation">
+            <MessageSquare size={16} aria-hidden /> Feedback
           </a>
           <button type="button" className="btn btn-ghost btn-sm" onClick={openRules}>
             <BookOpen size={16} /> Règles
