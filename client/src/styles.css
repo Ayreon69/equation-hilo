@@ -3494,3 +3494,15 @@ strong {
     animation: none !important;
   }
 }
+
+/* Lien vers la page qui liste tous les jeux, dans la barre du haut */
+.all-games {
+  text-decoration: none;
+}
+
+@media (max-width: 359px) {
+  .all-games {
+    gap: 0;
+    font-size: 0;
+  }
+}
