@@ -3,7 +3,7 @@
 Jeu multijoueur en ligne de calcul et de bluff, à jouer entre amis sur téléphone ou ordinateur.
 Inspiré de l'épreuve *Equation High-Low* de l'émission *The Devil's Plan* (projet fan non officiel).
 
-**Jouer : https://equation-hilo.onrender.com**
+**Jouer : https://equation-hilo-serveur.onrender.com**
 
 ## Le jeu en bref
 
